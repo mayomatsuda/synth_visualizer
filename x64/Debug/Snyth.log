@@ -2,7 +2,7 @@
 D:\Users\Myles\Code\Visual Studio Projects\synth\Snyth\olcNoiseMaker.h(110,18): warning C4244: 'initializing': conversion from '__int64' to 'int', possible loss of data
 D:\Users\Myles\Code\Visual Studio Projects\synth\Snyth\olcNoiseMaker.h(91): message : while compiling class template member function 'bool olcNoiseMaker<short>::Create(std::wstring,unsigned int,unsigned int,unsigned int,unsigned int)'
 D:\Users\Myles\Code\Visual Studio Projects\synth\Snyth\olcNoiseMaker.h(82): message : see reference to function template instantiation 'bool olcNoiseMaker<short>::Create(std::wstring,unsigned int,unsigned int,unsigned int,unsigned int)' being compiled
-D:\Users\Myles\Code\Visual Studio Projects\synth\Snyth\main.cpp(422): message : see reference to class template instantiation 'olcNoiseMaker<short>' being compiled
+D:\Users\Myles\Code\Visual Studio Projects\synth\Snyth\main.cpp(428): message : see reference to class template instantiation 'olcNoiseMaker<short>' being compiled
 D:\Users\Myles\Code\Visual Studio Projects\synth\Snyth\olcNoiseMaker.h(238,71): warning C4244: 'argument': conversion from 'DWORD_PTR' to 'DWORD', possible loss of data
 D:\Users\Myles\Code\Visual Studio Projects\synth\Snyth\olcNoiseMaker.h(237): message : while compiling class template member function 'void olcNoiseMaker<short>::waveOutProcWrap(HWAVEOUT,UINT,DWORD_PTR,DWORD_PTR,DWORD_PTR)'
 D:\Users\Myles\Code\Visual Studio Projects\synth\Snyth\olcNoiseMaker.h(121): message : see reference to function template instantiation 'void olcNoiseMaker<short>::waveOutProcWrap(HWAVEOUT,UINT,DWORD_PTR,DWORD_PTR,DWORD_PTR)' being compiled

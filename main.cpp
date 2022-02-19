@@ -216,13 +216,15 @@ namespace synth
 			// Then just put x-es where the function should be plotted
 			for (int i = 0; i < size; ++i) {
 
-				int adj = 1000;
+				int adj = 500;
+				int multiplier = 5;
+				int offset = 10;
 
-				double eq = 5 * 
+				double eq = multiplier *
 					1.00 * get_eq(dHertz, dLFOHertz, dLFOAmplitude, nType, adj, i) +
 					0.50 * get_eq(dHertz2, dLFOHertz2, dLFOAmplitude2, nType2, adj, i) +
 					0.25 * get_eq(dHertz3, dLFOHertz3, dLFOAmplitude3, nType3, adj, i)
-				+ 10;
+				+ offset;
 
 				chart[static_cast<int>(std::round(eq))][i] = 'x';
 			}
@@ -275,6 +277,7 @@ namespace synth
 			dVolume = 1.0;
 
 			build_graph(synth::scale(12), 5, 0.001, OSC_SINE, synth::scale(24), 0.0, 0.0, OSC_SINE, synth::scale(36));
+			//build_graph(synth::scale(12), 5, 0.001, OSC_SINE);
 		}
 
 		virtual FTYPE sound(const FTYPE dTime, synth::note n, bool& bNoteFinished)
@@ -329,6 +332,9 @@ namespace synth
 			env.dReleaseTime = 0.1;
 
 			dVolume = 1.0;
+
+			build_graph(synth::scale(12), 5, 0.001, OSC_SQUARE, synth::scale(24), 0.0, 0.0, OSC_SQUARE, synth::scale(36));
+			//build_graph(synth::scale(12), 5, 0.001, 1);
 		}
 
 		virtual FTYPE sound(const FTYPE dTime, synth::note n, bool& bNoteFinished)
@@ -403,7 +409,10 @@ void graph(int iChannel)
 
 	std::vector<std::string> chart;
 
-	if (iChannel == 2) {
+	if (iChannel == 1) {
+		chart = instHarm.graph;
+	}
+	else {
 		chart = instBell.graph;
 	}
 
@@ -415,24 +424,12 @@ void graph(int iChannel)
 
 int main()
 {
-	// Shameless self-promotion
-	wcout << "www.OneLoneCoder.com - Synthesizer Part 3" << endl << "Multiple Oscillators with Polyphony" << endl << endl;
-
 	// Get all sound hardware
 	vector<wstring> devices = olcNoiseMaker<short>::Enumerate();
 
 	// Display findings
 	for (auto d : devices) wcout << "Found Output Device: " << d << endl;
 	wcout << "Using Device: " << devices[0] << endl;
-
-	// Display a keyboard
-	wcout << endl <<
-		"|   |   |   |   |   | |   |   |   |   | |   | |   |   |   |" << endl <<
-		"|   | S |   |   | F | | G |   |   | J | | K | | L |   |   |" << endl <<
-		"|   |___|   |   |___| |___|   |   |___| |___| |___|   |   |__" << endl <<
-		"|     |     |     |     |     |     |     |     |     |     |" << endl <<
-		"|  Z  |  X  |  C  |  V  |  B  |  N  |  M  |  ,  |  .  |  /  |" << endl <<
-		"|_____|_____|_____|_____|_____|_____|_____|_____|_____|_____|" << endl << endl;
 
 	// Create sound machine!!
 	olcNoiseMaker<short> sound(devices[0], 44100, 1, 8, 512);
@@ -448,6 +445,9 @@ int main()
 	auto clock_real_time = chrono::high_resolution_clock::now();
 	double dElapsedTime = 0.0;
 
+	// Change this to change instrument
+	// 1 = harmonica (square)
+	// 2 = bell (sine)
 	int iChannel = 2;
 
 	graph(iChannel);
