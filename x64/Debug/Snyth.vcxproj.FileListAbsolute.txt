@@ -1,1 +1,2 @@
 D:\Users\Myles\Code\Visual Studio Projects\synth\Snyth\x64\Debug\Snyth.exe
+D:\Users\Myles\Code\Visual Studio\Visual Studio Projects\synth\Snyth\x64\Debug\Snyth.exe

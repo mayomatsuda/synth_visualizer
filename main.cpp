@@ -150,6 +150,11 @@ namespace synth
 			dStartAmplitude = 1.0;
 		}
 
+		//void setAttackTime(FTYPE dNewAttackTime)
+		//{
+		//	dAttackTime = dNewAttackTime;
+		//}
+
 		virtual FTYPE amplitude(const FTYPE dTime, const FTYPE dTimeOn, const FTYPE dTimeOff)
 		{
 			FTYPE dAmplitude = 0.0;
@@ -200,12 +205,55 @@ namespace synth
 
 	struct instrument_base
 	{
+		FTYPE dHertz;
+		int nOffsetZero;
+		FTYPE dLFOHertz;
+		FTYPE dLFOAmplitude;
+		int nType;
+		FTYPE dHertz2 = 0.0;
+		int nOffsetOne;
+		FTYPE dLFOHertz2 = 0.0;
+		FTYPE dLFOAmplitude2 = 0.0;
+		int nType2 = 0;
+		FTYPE dHertz3 = 0.0;
+		int nOffsetTwo;
+		FTYPE dLFOHertz3 = 0.0;
+		FTYPE dLFOAmplitude3 = 0.0;
+		int nType3 = 0;
+
+
 		FTYPE dVolume;
 		synth::envelope_adsr env;
 		virtual FTYPE sound(const FTYPE dTime, synth::note n, bool& bNoteFinished) = 0;
 		std::vector<std::string> graph;
 
-		void build_graph(FTYPE dHertz, FTYPE dLFOHertz, FTYPE dLFOAmplitude, int nType, FTYPE dHertz2 = 0.0, FTYPE dLFOHertz2 = 0.0, FTYPE dLFOAmplitude2 = 0.0, int nType2 = 0, FTYPE dHertz3 = 0.0, FTYPE dLFOHertz3 = 0.0, FTYPE dLFOAmplitude3 = 0.0, int nType3 = 0)
+		void setLFOHertz(FTYPE dNewLFOHertz)
+		{
+			dLFOHertz = dNewLFOHertz;
+			build_graph();
+		}
+
+		void setLFOAmplitude(FTYPE dNewdLFOAmplitude)
+		{
+			dLFOAmplitude = dNewdLFOAmplitude;
+			build_graph();
+		}
+
+		void setOffsetZero(int nNewOffsetZero)
+		{
+			nOffsetZero = nNewOffsetZero;
+			dHertz = synth::scale(nOffsetZero);
+			build_graph();
+		}
+
+		void setOffsetOne(int nNewOffsetOne)
+		{
+			nOffsetOne = nNewOffsetOne;
+			dHertz2 = synth::scale(nOffsetOne);
+			build_graph();
+		}
+
+		void build_graph()
 		{
 			int size = 100, height = 30;
 
@@ -274,9 +322,20 @@ namespace synth
 			env.dSustainAmplitude = 0.0;
 			env.dReleaseTime = 1.0;
 
+			nOffsetZero = 12;
+			dHertz = synth::scale(nOffsetZero);
+			dLFOHertz = 5;
+			dLFOAmplitude = 0.001;
+			nType = OSC_SINE;
+			nOffsetOne = 24;
+			dHertz2 = synth::scale(nOffsetOne);
+			nType2 = OSC_SINE;
+			nOffsetTwo = 36;
+			dHertz3 = synth::scale(nOffsetTwo);
+
 			dVolume = 1.0;
 
-			build_graph(synth::scale(12), 5, 0.001, OSC_SINE, synth::scale(24), 0.0, 0.0, OSC_SINE, synth::scale(36));
+			build_graph();
 			//build_graph(synth::scale(12), 5, 0.001, OSC_SINE);
 		}
 
@@ -286,9 +345,9 @@ namespace synth
 			if (dAmplitude <= 0.0) bNoteFinished = true;
 
 			FTYPE dSound =
-				+ 1.00 * synth::osc(n.on - dTime, synth::scale(n.id + 12), synth::OSC_SINE, 5.0, 0.001)
-				+ 0.50 * synth::osc(n.on - dTime, synth::scale(n.id + 24))
-				+ 0.25 * synth::osc(n.on - dTime, synth::scale(n.id + 36));
+				+ 1.00 * synth::osc(n.on - dTime, synth::scale(n.id + nOffsetZero), nType, dLFOHertz, dLFOAmplitude)
+				+ 0.50 * synth::osc(n.on - dTime, synth::scale(n.id + nOffsetOne))
+				+ 0.25 * synth::osc(n.on - dTime, synth::scale(n.id + nOffsetTwo));
 			
 			return dAmplitude * dSound * dVolume;
 		}
@@ -332,8 +391,18 @@ namespace synth
 			env.dReleaseTime = 0.1;
 
 			dVolume = 1.0;
+			nOffsetZero = 0;
+			dHertz = synth::scale(nOffsetZero);
+			dLFOHertz = 5;
+			dLFOAmplitude = 0.001;
+			nType = OSC_SQUARE;
+			nOffsetOne = 12;
+			dHertz2 = synth::scale(nOffsetOne);
+			nType2 = OSC_SQUARE;
+			nOffsetTwo = 24;
+			dHertz3 = synth::scale(nOffsetTwo);
 
-			build_graph(synth::scale(12), 5, 0.001, OSC_SQUARE, synth::scale(24), 0.0, 0.0, OSC_SQUARE, synth::scale(36));
+			build_graph();
 			//build_graph(synth::scale(12), 5, 0.001, 1);
 		}
 
@@ -344,9 +413,9 @@ namespace synth
 
 			FTYPE dSound =
 				//+ 1.0  * synth::osc(n.on - dTime, synth::scale(n.id-12), synth::OSC_SAW_ANA, 5.0, 0.001, 100)
-				+ 1.00 * synth::osc(n.on - dTime, synth::scale(n.id), synth::OSC_SQUARE, 5.0, 0.001)
-				+ 0.50 * synth::osc(n.on - dTime, synth::scale(n.id + 12), synth::OSC_SQUARE)
-				+ 0.05 * synth::osc(n.on - dTime, synth::scale(n.id + 24), synth::OSC_NOISE);
+				+ 1.00 * synth::osc(n.on - dTime, synth::scale(n.id + nOffsetZero), synth::OSC_SQUARE, 5.0, 0.001)
+				+ 0.50 * synth::osc(n.on - dTime, synth::scale(n.id + nOffsetOne), synth::OSC_SQUARE)
+				+ 0.05 * synth::osc(n.on - dTime, synth::scale(n.id + nOffsetTwo), synth::OSC_NOISE);
 
 			return dAmplitude * dSound * dVolume;
 		}
@@ -448,7 +517,7 @@ int main()
 	// Change this to change instrument
 	// 1 = harmonica (square)
 	// 2 = bell (sine)
-	int iChannel = 2;
+	int iChannel = 1;
 
 	graph(iChannel);
 
@@ -478,6 +547,9 @@ int main()
 
 					// Add note to vector
 					vecNotes.emplace_back(n);
+
+					//instHarm.setOffsetZero(12);
+					//graph(iChannel);
 				}
 				else
 				{
